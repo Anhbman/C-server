@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "libpq-fe.h": "c",
+        "funcconstant.h": "c",
+        "stdlib.h": "c",
+        "string.h": "c",
+        "addplace.h": "c",
+        "login.h": "c",
+        "constant.h": "c"
+    }
+}
