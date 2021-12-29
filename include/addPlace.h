@@ -10,11 +10,12 @@
 #include "stdlib.h"
 #include "FuncConstant.h"
 #include "helper.h"
+#include "constant.h"
 #include <sys/socket.h>
 
 
-int addAddress (int sockfd, PGconn *conn);
 void addPlace(int sockfd, PGconn *conn);
 void showPlace (int sockfd, PGconn *conn);
+
 
 #endif //C_SERVER_ADDPLACE_H

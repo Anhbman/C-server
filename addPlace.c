@@ -3,64 +3,103 @@
 
 #define BUFF_SIZE 1024
 
-int addAddress (int sockfd, PGconn *conn){
+int addAddress (int sockfd,char* namePlace,char* category,PGconn *conn){
 
 	char* Address = (char*)malloc(BUFF_SIZE*sizeof(char)); 
-    char name[20];
 
-    strcpy(name,"Ha Noi");
-    sprintf(Address,"SELECT \"AddressID\" FROM public.\"Address\" where address = '%s'",name);
+    sprintf(Address,"SELECT \"address_id\" FROM public.\"Address\" where address = '%s' and category_id = %s ",namePlace, category);
 	printf("query: %s\n",Address);
 
 	PGresult *res = PQexec(conn, Address);
 
-    //memset(Address,0,BUFF_SIZE);
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-        printf("Loi select Address\n");
-        //do_exit(conn, res);    
-	}
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        printf("No data retrieved\n");        
+        PQclear(res);
+    }    
 
     int rec_count = PQntuples(res);
 
-	if (rec_count != 0){
+    printf("count: %d\n", rec_count);
+	
+    if (rec_count != 0){
         free(Address);
 		return atoi(PQgetvalue(res, 0, 0));
 	} else {
         char* insertAddress = (char*)malloc(BUFF_SIZE*sizeof(char)); 
 
-        sprintf(insertAddress,"INSERT INTO public.\"Address\" (\"AddressID\", \"Address\", \"CategoryID\") VALUES (nextval(\'Address_id\'), '%s', %d)",name, 1);
+        sprintf(insertAddress,"INSERT INTO public.\"Address\" (\"address_id\", \"address\", \"category_id\") VALUES (nextval(\'Address_id\'), '%s', %s)",namePlace, category);
+       
         PGresult *res = PQexec(conn, insertAddress);
+
         free(insertAddress);
+        
         if (PQresultStatus(res) != PGRES_COMMAND_OK) {
             printf("Loi select Address 1\n");
             //do_exit(conn, res);    
         }
 
-         res = PQexec(conn, Address);
-        if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-            printf("Loi select Address 2\n");
-            //do_exit(conn, res);    
-	    }
+        res = PQexec(conn, Address);
+
+        free(Address);
+        if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+            printf("No data retrieved\n");        
+            PQclear(res);
+            do_exit(conn);
+        }    
+
         int rec_count = PQntuples(res);
         if (rec_count != 0){
-            free(Address);
             return atoi(PQgetvalue(res, 0, 0));
         } 
     }
     return -1;
 }
+
 void addPlace(int sockfd, PGconn *conn) {
 
 	char* place = (char*)malloc(BUFF_SIZE*sizeof(char));
 
-    int AdressID = addAddress(sockfd, conn);
+    char buff[BUFF_SIZE];
+    int bytes_sent, bytes_received;
 
-    printf("%d\n",AdressID);
+    bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
+
+    if (bytes_received < 0)
+        perror("\nError: ");
+    else if (bytes_received == 0)
+        printf("Connection closed.\n");
+    buff[bytes_received] = 0;
+
+    printf("recv: %s\n",buff);
+
+    char* user = strtok(buff, "|");
+    char* namePlace = strtok(NULL, "|");
+    char* category = strtok(NULL, "|");
+
+    int AdressID = addAddress(sockfd, namePlace, category, conn);
+    int getUser = userID(user, conn);
+
+    printf("UserID: %d\n", getUser);
+    printf("addressID: %d\n", AdressID);
+    sprintf(place, "INSERT INTO public.\"FavoriteAddress\" (user_id, address_id, friend_id) VALUES (%d, %d, %d);",getUser, AdressID, 0);
+
 	PGresult *res = PQexec(conn, place);
 	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+        printf("ERROR query addPlace\n");
+        bytes_sent = send(sockfd, ADD_PLACE_ERR, BUFF_SIZE, 0);
+        if (bytes_sent <= 0)
+        {
+            printf("ERROR add Place");
+        }
         do_exit(conn);    
 	}
-	printf("Add palce\n");
+
+    bytes_sent = send(sockfd, ADD_PLACE_OK, BUFF_SIZE, 0);
+    if (bytes_sent <= 0)
+    {
+        printf("ERROR add Place");
+    }
+    
 	free(place); 
 }
 
@@ -91,11 +130,11 @@ void showPlace (int sockfd, PGconn *conn) {
     PGresult *res = PQexec(conn, queryPlace);
 
     //memset(Address,0,BUFF_SIZE);
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-        printf("Loi select Address\n");
-        //send(sockfd, "Loi", 3, 0);
-        //do_exit(conn, res);    
-	}
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        printf("No data retrieved\n");        
+        PQclear(res);
+        do_exit(conn);
+    }    
 
     int rec_count = PQntuples(res);
 

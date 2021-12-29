@@ -76,8 +76,11 @@ void controller (int sockfd){
 	while (1)
 	{
 		char buff[BUFF_SIZE];
+		char name[BUFF_SIZE];
+
 		int bytes_received;
 
+// 		Chuc nang
 		bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
 		if (bytes_received < 0)
 			perror("\nError: ");
@@ -85,10 +88,13 @@ void controller (int sockfd){
 			printf("Connection closed.\n");
 			return;
 		}
-
 		buff[bytes_received] = 0;
 
+
 		int chon = atoi(buff);
+
+		// user name
+
 
 		switch (chon)
 		{
@@ -105,7 +111,12 @@ void controller (int sockfd){
 			break;
 		case 5:
 			printf("show_user_place\n");
-			showPlaceUser(sockfd, conn);
+			showPlaceUser(sockfd, name,conn);
+			showFriend(sockfd, name, conn);
+			break;
+		case 8:
+			printf("Add place\n");
+			addPlace(sockfd, conn);
 			break;
 		default:
 			break;
