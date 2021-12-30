@@ -1,4 +1,4 @@
-#include <include/Home.h>
+#include "include/Home.h"
 
 int getNumberCate(PGconn* conn) {
     char* query = (char*)malloc(sizeof(char)*BUFF_SIZE);
@@ -56,7 +56,7 @@ void home(int sockfd, PGconn *conn) {
 	int rec_count = PQntuples(res);
     for (int row=0; row<rec_count; row++) {
 		
-		strcat(value,PQgetvalue(res, row, 0));
+		strcpy(value,PQgetvalue(res, row, 0));
 		strcat(value,"|");
         strcat(value, PQgetvalue(res, row, 1));
         int bytes_sent = send(sockfd, value, BUFF_SIZE, 0); /* echo to the client */
@@ -66,7 +66,7 @@ void home(int sockfd, PGconn *conn) {
 	}
 
 	//printf("value: %s\n",value);
-	int bytes_sent = send(sockfd, value, BUFF_SIZE, 0); /* echo to the client */
+	int bytes_sent = send(sockfd, SEND_END, BUFF_SIZE, 0); /* echo to the client */
 	if (bytes_sent < 0)
 		perror("\nError: ");
 

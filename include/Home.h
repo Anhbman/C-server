@@ -10,6 +10,6 @@
 #include "FuncConstant.h"
 #include "constant.h"
 
-int home(int sockfd, PGconn *conn);
+void home(int sockfd, PGconn *conn);
 
 #endif //C_SERVER_HOME_H
