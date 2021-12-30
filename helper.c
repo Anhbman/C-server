@@ -3,11 +3,11 @@
 
 int userID (char* name, PGconn *conn) {
     char* query = (char *) malloc (sizeof(char));
-    sprintf(query, "SELECT user_id FROM public.taikhoan WHERE user_name = '%s'", "batman");
+    sprintf(query, "SELECT user_id FROM public.taikhoan WHERE user_name = '%s'", name);
 
     printf("getUserID: %s\n",query);
     PGresult *res = PQexec(conn, query);
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         printf("Loi select helper UserID\n");
         //do_exit(conn, res);    
 	}
@@ -44,7 +44,7 @@ void showPlaceUser(int sockfd, PGconn *conn) {
 
     char* query = (char*)malloc(sizeof(char)*BUFF_SIZE);
 
-    fprintf(query,"select DISTINCT f.address_id, a.address from public.\"FavoriteAddress\" f, public.\"Address\" a, t where f.address_id = a.address_id and f.user_id = %d",1);
+    sprintf(query,"select DISTINCT f.address_id, a.address from public.\"FavoriteAddress\" f, public.\"Address\" a, t where f.address_id = a.address_id and f.user_id = %d",1);
 
     PGresult *res = PQexec(conn, query);
     int rec_count = PQntuples(res);

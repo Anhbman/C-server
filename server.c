@@ -23,7 +23,8 @@
 #include "include/addPlace.h"
 #include "include/FuncConstant.h"
 #include "include/helper.h"
-
+#include "include/Register.h"
+#include "include/AddFriend.h"
 
 // #define PORT 5500
 
@@ -66,7 +67,7 @@ void showHome(int sockfd, PGconn *conn){
 
 void controller (int sockfd){
 
-	PGconn *conn = PQconnectdb("user=postgres host=localhost password=1304 dbname=LTM");
+	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=LTMreal");
 	if (PQstatus(conn) == CONNECTION_BAD) {   
         fprintf(stderr, "Connection to database failed: %s\n",
             PQerrorMessage(conn));
@@ -107,6 +108,13 @@ void controller (int sockfd){
 			printf("show_user_place\n");
 			showPlaceUser(sockfd, conn);
 			break;
+		case 7:
+			printf("Register\n");
+			Register(sockfd,conn);
+			break;
+		case 15:
+			printf("Add Friend\n");
+			Addfriend(sockfd,conn);
 		default:
 			break;
 		}
@@ -119,7 +127,7 @@ int main(int argc, char* argv[]) {
 
 	// Coonect DB
 
-	PGconn *conn = PQconnectdb("user=postgres host=localhost password=1304 dbname=LTM");
+	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=LTMreal");
 	if (PQstatus(conn) == CONNECTION_BAD) {   
         fprintf(stderr, "Connection to database failed: %s\n",
             PQerrorMessage(conn));
