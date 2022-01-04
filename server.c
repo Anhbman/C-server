@@ -23,6 +23,7 @@
 #include "include/addPlace.h"
 #include "include/FuncConstant.h"
 #include "include/helper.h"
+#include "include/home.h"
 
 
 // #define PORT 5500
@@ -103,11 +104,13 @@ void controller (int sockfd){
 			Login(sockfd, conn);
 			break;
 		case 2:
-			showHome(sockfd, conn);
+			// showHome(sockfd, conn);
+			printf("Home\n");
+			home(sockfd, conn);
 			break;
 		case 3:
 			printf("showPlace\n");
-			showPlace(sockfd, conn);
+			show_page_data(sockfd, conn);
 			break;
 		case 5:
 			printf("show_user_place\n");
