@@ -107,3 +107,24 @@ void showFriend(int sockfd, char* name,PGconn *conn) {
 		perror("\nError: ");
     free(query);
 }
+
+int getPlaceID (int sockfd,PGconn *conn, char* namePlace) {
+    char* Address = (char*)malloc(BUFF_SIZE*sizeof(char)); 
+
+    sprintf(Address,"SELECT \"address_id\" FROM public.\"Address\" where address = '%s'",namePlace);
+	printf("query: %s\n",Address);
+
+	PGresult *res = PQexec(conn, Address);
+
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        printf("No data retrieved\n");        
+        PQclear(res);
+    }    
+
+    int rec_count = PQntuples(res);
+
+    printf("count: %d\n", rec_count);
+	
+    free(Address);
+    return atoi(PQgetvalue(res, 0, 0));
+}

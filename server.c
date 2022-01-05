@@ -121,6 +121,9 @@ void controller (int sockfd){
 			printf("Add place\n");
 			addPlace(sockfd, conn);
 			break;
+		case 9:
+			remove_place(sockfd,conn);
+			break;
 		default:
 			break;
 		}

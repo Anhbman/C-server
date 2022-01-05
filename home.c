@@ -127,3 +127,47 @@ void show_page_data (int sockfd, PGconn *conn) {
     free(value);
     free(username);
 }
+
+void remove_place (int sockfd, PGconn *conn ) {
+    char buff[BUFF_SIZE];
+    int bytes_sent, bytes_received;
+
+    bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
+    if (bytes_received < 0)
+        perror("\nError: ");
+    else if (bytes_received == 0)
+        printf("Connection closed.\n");
+    buff[bytes_received] = 0;
+    
+    char* username = (char *)malloc(sizeof(char)*BUFF_SIZE);
+
+    strcpy(username, buff);
+
+     bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
+    if (bytes_received < 0)
+        perror("\nError: ");
+    else if (bytes_received == 0)
+        printf("Connection closed.\n");
+    buff[bytes_received] = 0;
+    
+    int getUserid = userID(username, conn);
+
+    printf("UserID: %d\n",getUserid);
+    char* queryPlace = (char*)malloc(sizeof(char)*BUFF_SIZE);
+    int placeID = getPlaceID(sockfd,conn,buff);
+
+    sprintf(queryPlace,"DELETE FROM public.\"FavoriteAddress\" WHERE user_id = %d and address_id = %d;", getUserid, placeID);
+
+    printf("quety: %d", queryPlace);
+
+    PGresult *res = PQexec(conn, queryPlace);
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+            printf("Loi delete pacle\n");
+            //do_exit(conn, res);    
+            send(sockfd, REMOVE_PLACE_ERROR,BUFF_SIZE,0);
+    }
+    else {
+        send(sockfd, REMOVE_PLACE_OK,BUFF_SIZE,0);
+    }
+
+}
