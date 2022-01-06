@@ -9,7 +9,10 @@
 #include <arpa/inet.h>
 #include "FuncConstant.h"
 #include "constant.h"
+#include "helper.h"
 
 void home(int sockfd, PGconn *conn);
+void show_page_data(int sockfd, PGconn *conn);
+void remove_place (int sockfd, PGconn *conn );
 
 #endif //C_SERVER_HOME_H
