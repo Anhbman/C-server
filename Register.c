@@ -60,6 +60,6 @@ int Register(int sockfd, PGconn *conn) {
 
     
     
-    bytes_sent = send(sockfd, "s0", BUFF_SIZE, 0); /* echo to the client */
+    bytes_sent = send(sockfd, "s1", BUFF_SIZE, 0); /* echo to the client */
     return 0;
 }

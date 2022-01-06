@@ -59,8 +59,9 @@ void showHome(int sockfd, PGconn *conn){
 		strcat(value,"|");
 	}
 
-	//printf("value: %s\n",value);
+	printf("value: %s\n",value);
 	int bytes_sent = send(sockfd, value, BUFF_SIZE, 0); /* echo to the client */
+	bytes_sent = send(sockfd,SEND_END,BUFF_SIZE,0);
 	if (bytes_sent < 0)
 		perror("\nError: ");
 }
@@ -98,6 +99,7 @@ void controller (int sockfd){
 			Login(sockfd, conn);
 			break;
 		case 2:
+			printf("Show home\n");
 			showHome(sockfd, conn);
 			break;
 		case 3:
@@ -115,6 +117,19 @@ void controller (int sockfd){
 		case 15:
 			printf("Add Friend\n");
 			Addfriend(sockfd,conn);
+			break;
+		case 16:
+			printf("Show friend list\n");
+			showFriendList(sockfd,conn);
+			break;
+		case 17:
+			printf("Show user list\n");
+			showUserList(sockfd,conn);
+			break;
+		case 18:
+			printf("Show friend request\n");
+			showFriendRequest(sockfd,conn);
+			break;
 		default:
 			break;
 		}
