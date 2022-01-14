@@ -23,50 +23,57 @@ int userID (char* name, PGconn *conn) {
 }
 
 
-void showPlaceUser(int sockfd, PGconn *conn) {
 
-    char* buff = (char*)malloc(sizeof(char)*BUFF_SIZE);;
-    int bytes_received;
 
-    bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
-    if (bytes_received < 0)
-        perror("\nError: ");
-    else if (bytes_received == 0){
-        printf("Connection closed.\n");
-        return;
-    }
+void showFriend(int sockfd, char* name,PGconn *conn) {
 
-    buff[bytes_received] = 0;
-
-    char* name = (char*)malloc(sizeof(char)*BUFF_SIZE);
-    strcpy(name,buff);
-    //int getUserID = userID(name, conn);
-
+    printf("show friend\n");
     char* query = (char*)malloc(sizeof(char)*BUFF_SIZE);
-
-    sprintf(query,"select DISTINCT f.address_id, a.address from public.\"FavoriteAddress\" f, public.\"Address\" a, t where f.address_id = a.address_id and f.user_id = %d",1);
-
+    
+    sprintf(query,"select t.user_name from public.\"Friend\" as f, public.taikhoan as t where f.user_id1 = %d and f.user_id2 = t.user_id;",1);
+    
     PGresult *res = PQexec(conn, query);
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        printf("No data retrieved\n");        
+        PQclear(res);
+        do_exit(conn);
+    }    
     int rec_count = PQntuples(res);
-	
-	char value[BUFF_SIZE] = {0};
-	
-    printf("bangi: %d\n",rec_count);
+
+    char value[BUFF_SIZE] = {0};
+
     for (int row=0; row<rec_count; row++) {
 		
 		// test dung
         printf("1\n");
-		strcat(value,PQgetvalue(res, row, 1));
+		strcat(value,PQgetvalue(res, row, 0));
 		strcat(value,"|");
 	}
 
-	printf("value: %s\n",value);
-	int bytes_sent = send(sockfd, "hanoi|", BUFF_SIZE, 0); /* echo to the client */
+    printf("value: %s\n",value);
+	int bytes_sent = send(sockfd, value, BUFF_SIZE, 0); /* echo to the client */
 	if (bytes_sent < 0)
 		perror("\nError: ");
-    
-    free(buff);
-    free(name);
     free(query);
-    
+}
+
+int getPlaceID (int sockfd,PGconn *conn, char* namePlace) {
+    char* Address = (char*)malloc(BUFF_SIZE*sizeof(char)); 
+
+    sprintf(Address,"SELECT \"address_id\" FROM public.\"Address\" where address = '%s'",namePlace);
+	printf("query: %s\n",Address);
+
+	PGresult *res = PQexec(conn, Address);
+
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        printf("No data retrieved\n");        
+        PQclear(res);
+    }    
+
+    int rec_count = PQntuples(res);
+
+    printf("count: %d\n", rec_count);
+	
+    free(Address);
+    return atoi(PQgetvalue(res, 0, 0));
 }

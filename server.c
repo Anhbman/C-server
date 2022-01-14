@@ -23,8 +23,11 @@
 #include "include/addPlace.h"
 #include "include/FuncConstant.h"
 #include "include/helper.h"
-#include "include/Register.h"
+#include "include/home.h"
 #include "include/AddFriend.h"
+#include "include/Register.h"
+#include "include/SharePlace.h"
+
 
 // #define PORT 5500
 
@@ -59,16 +62,15 @@ void showHome(int sockfd, PGconn *conn){
 		strcat(value,"|");
 	}
 
-	printf("value: %s\n",value);
+	//printf("value: %s\n",value);
 	int bytes_sent = send(sockfd, value, BUFF_SIZE, 0); /* echo to the client */
-	bytes_sent = send(sockfd,SEND_END,BUFF_SIZE,0);
 	if (bytes_sent < 0)
 		perror("\nError: ");
 }
 
 void controller (int sockfd){
 
-	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=LTMreal");
+	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=LTM3");
 	if (PQstatus(conn) == CONNECTION_BAD) {   
         fprintf(stderr, "Connection to database failed: %s\n",
             PQerrorMessage(conn));
@@ -78,8 +80,11 @@ void controller (int sockfd){
 	while (1)
 	{
 		char buff[BUFF_SIZE];
+		char name[BUFF_SIZE];
+
 		int bytes_received;
 
+// 		Chuc nang
 		bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
 		if (bytes_received < 0)
 			perror("\nError: ");
@@ -87,10 +92,13 @@ void controller (int sockfd){
 			printf("Connection closed.\n");
 			return;
 		}
-
 		buff[bytes_received] = 0;
 
+
 		int chon = atoi(buff);
+
+		// user name
+
 
 		switch (chon)
 		{
@@ -99,36 +107,59 @@ void controller (int sockfd){
 			Login(sockfd, conn);
 			break;
 		case 2:
-			printf("Show home\n");
-			showHome(sockfd, conn);
+			// showHome(sockfd, conn);
+			printf("Home\n");
+			home(sockfd, conn);
 			break;
 		case 3:
 			printf("showPlace\n");
-			showPlace(sockfd, conn);
+			show_page_data(sockfd, conn);
 			break;
 		case 5:
 			printf("show_user_place\n");
-			showPlaceUser(sockfd, conn);
+			showPlaceUser(sockfd,conn);
+		
 			break;
+		// case 6:
+		// 	printf("show user friend\n");
+		// 	showFriend(sockfd,conn);
+		// 	break;
 		case 7:
-			printf("Register\n");
+
+			printf("register\n");
 			Register(sockfd,conn);
 			break;
-		case 15:
+		case 8:
+			printf("Add place\n");
+			addPlace(sockfd, conn);
+			break;
+		case 9:
+			remove_place(sockfd,conn);
+			break;
+		case 15 :
 			printf("Add Friend\n");
 			Addfriend(sockfd,conn);
 			break;
 		case 16:
-			printf("Show friend list\n");
+			printf("Add Friend\n");
 			showFriendList(sockfd,conn);
+			
 			break;
 		case 17:
-			printf("Show user list\n");
+			printf("Show User List\n");
 			showUserList(sockfd,conn);
 			break;
 		case 18:
-			printf("Show friend request\n");
+			printf("Show Friend Request\n");
 			showFriendRequest(sockfd,conn);
+			break;
+		case 19:
+			printf("Accept Friend\n");
+			acceptFriend(sockfd,conn);
+			break;
+		case 20:
+			printf("Share Place\n");
+			sharePlace(sockfd,conn);
 			break;
 		default:
 			break;
@@ -142,7 +173,7 @@ int main(int argc, char* argv[]) {
 
 	// Coonect DB
 
-	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=LTMreal");
+	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=LTM3");
 	if (PQstatus(conn) == CONNECTION_BAD) {   
         fprintf(stderr, "Connection to database failed: %s\n",
             PQerrorMessage(conn));

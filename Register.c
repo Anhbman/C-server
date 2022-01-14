@@ -31,7 +31,7 @@ int Register(int sockfd, PGconn *conn) {
     printf("recv: %s\n",buff);
     strcat(query, buff);
 
-    sprintf(query,"INSERT INTO public.taikhoan(user_name,password) VALUES ('%s','%s')",username,password);
+    sprintf(query,"INSERT INTO public.taikhoan VALUES (nextval('user_id'),'%s','%s')",username,password);
     sprintf(query_check,"SELECT * FROM public.taikhoan where user_name = '%s'",username);
     PGresult *res = PQexec(conn, query_check);
     printf("query: %s\n",query_check);
@@ -39,7 +39,7 @@ int Register(int sockfd, PGconn *conn) {
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         printf("No data retrieved\n");
         printf("%s\n",PQresultErrorMessage(res));
-        bytes_sent = send(sockfd, "s1", 2, 0); /* echo to the client */
+        bytes_sent = send(sockfd, "s1", BUFF_SIZE, 0); /* echo to the client */
         return 0;
         // PQclear(res);
         // do_exit(conn);
@@ -47,9 +47,9 @@ int Register(int sockfd, PGconn *conn) {
     if (PQntuples(res)==0) {
         res = PQexec(conn,query);
         if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-            printf("No data retrieved\n");
+            printf("No data retrieved1\n");
             printf("%s\n",PQresultErrorMessage(res));
-            bytes_sent = send(sockfd,"s1",2,0);
+            bytes_sent = send(sockfd,"s1",BUFF_SIZE,0);
             return 0;
         }
         bytes_sent = send(sockfd,"s0",BUFF_SIZE,0);

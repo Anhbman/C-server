@@ -4,13 +4,11 @@ LIBS =  -lm
 
 all: pjC
 
-pjC: server.o addPlace.o Login.o Register.o FuncConstant.o helper.o AddFriend.o
-	${CC} server.o Login.o Register.o addPlace.o FuncConstant.o helper.o AddFriend.o -o pjC -I/usr/include/postgresql -lpq -std=c99
-
+pjC: server.o addPlace.o Login.o Register.o FuncConstant.o helper.o AddFriend.o home.o SharePlace.o
+	${CC} server.o Login.o Register.o addPlace.o FuncConstant.o helper.o AddFriend.o home.o SharePlace.o -o pjC -I/usr/include/postgresql -lpq -std=c99
 
 server.o: server.c
 	${CC} ${CFLAGS} server.c -I/usr/include/postgresql -lpq -std=c99
-
 
 addPlace.o: addPlace.c
 	${CC} ${CFLAGS} addPlace.c -I/usr/include/postgresql -lpq -std=c99
@@ -29,6 +27,10 @@ Register.o: Register.c
 
 AddFriend.o: AddFriend.c
 	${CC} ${CFLAGS} AddFriend.c -I/usr/include/postgresql -lpq -std=c99
+home.o: home.c
+	${CC} ${CFLAGS} home.c -I/usr/include/postgresql -lpq -std=c99
+SharePlace.o: SharePlace.c
+	${CC} ${CFLAGS} SharePlace.c -I/usr/include/postgresql -lpq -std=c99
 
 clean:
 	rm -f *.o *~
