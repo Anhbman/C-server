@@ -9,7 +9,6 @@
 
 
 int userID (char* name, PGconn *conn);
-void showPlaceUser(int sockfd, char* name, PGconn *conn);
 void showFriend(int sockfd, char* name,PGconn *conn);
 int getPlaceID (int sockfd,PGconn *conn, char* namePlace, int cate);
 int getCategoryID (PGconn *conn, char* cate);
