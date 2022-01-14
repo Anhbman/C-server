@@ -105,7 +105,6 @@ void controller (int sockfd){
 			break;
 		case 2:
 			// showHome(sockfd, conn);
-			printf("Home\n");
 			home(sockfd, conn);
 			break;
 		case 3:
@@ -123,6 +122,13 @@ void controller (int sockfd){
 			break;
 		case 9:
 			remove_place(sockfd,conn);
+			break;
+
+		case 10:
+			backup(sockfd, conn);
+			break;
+		case 11:
+			restore(sockfd,conn);
 			break;
 		default:
 			break;

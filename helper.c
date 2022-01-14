@@ -9,12 +9,13 @@ int userID (char* name, PGconn *conn) {
     PGresult *res = PQexec(conn, query);
    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         printf("No data retrieved\n");        
-        PQclear(res);
-        do_exit(conn);
+        // PQclear(res);
+        // do_exit(conn);
     }    
 
     int rec_count = PQntuples(res);    
 
+    printf("userID\n");
     if (rec_count != 0){
         free(query);
 		return atoi(PQgetvalue(res, 0, 0));
@@ -108,10 +109,10 @@ void showFriend(int sockfd, char* name,PGconn *conn) {
     free(query);
 }
 
-int getPlaceID (int sockfd,PGconn *conn, char* namePlace) {
+int getPlaceID (int sockfd,PGconn *conn, char* namePlace, int cate) {
     char* Address = (char*)malloc(BUFF_SIZE*sizeof(char)); 
 
-    sprintf(Address,"SELECT \"address_id\" FROM public.\"Address\" where address = '%s'",namePlace);
+    sprintf(Address,"SELECT \"address_id\" FROM public.\"Address\" where address = '%s' and category_id = %d",namePlace, cate);
 	printf("query: %s\n",Address);
 
 	PGresult *res = PQexec(conn, Address);
@@ -127,4 +128,48 @@ int getPlaceID (int sockfd,PGconn *conn, char* namePlace) {
 	
     free(Address);
     return atoi(PQgetvalue(res, 0, 0));
+}
+
+int getCategoryID (PGconn *conn, char* cate) {
+
+    char* category = (char*)malloc(BUFF_SIZE*sizeof(char)); 
+
+    sprintf(category," SELECT category_id FROM public.\"Category\" c where c.category_name = '%s'",cate);
+	printf("query: %s\n",category);
+
+	PGresult *res = PQexec(conn, category);
+
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        printf("No data retrieved\n");        
+        PQclear(res);
+    }    
+
+    int rec_count = PQntuples(res);
+
+    printf("count: %d\n", rec_count);
+	
+    free(category);
+    return atoi(PQgetvalue(res, 0, 0));
+}
+
+char* getuserName (int sockfd,PGconn *conn, char* name) {
+
+    printf("getuserName\n");
+    char* userName = (char*)malloc(BUFF_SIZE*sizeof(char)); 
+
+    sprintf(userName," select user_name from taikhoan where user_id = %s",name);
+
+	PGresult *res = PQexec(conn, userName);
+
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        printf("No data retrieved\n");        
+        PQclear(res);
+    }    
+
+    int rec_count = PQntuples(res);
+
+    printf("NameUser count: %d\n", rec_count);
+	
+    free(userName);
+    return (PQgetvalue(res, 0, 0));
 }
