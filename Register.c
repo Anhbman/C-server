@@ -39,7 +39,7 @@ int Register(int sockfd, PGconn *conn) {
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         printf("No data retrieved\n");
         printf("%s\n",PQresultErrorMessage(res));
-        bytes_sent = send(sockfd, "s1", BUFF_SIZE, 0); /* echo to the client */
+        bytes_sent = send(sockfd, REGISTER_FAIL, BUFF_SIZE, 0); /* echo to the client */
         return 0;
         // PQclear(res);
         // do_exit(conn);
@@ -49,10 +49,10 @@ int Register(int sockfd, PGconn *conn) {
         if (PQresultStatus(res) != PGRES_COMMAND_OK) {
             printf("No data retrieved1\n");
             printf("%s\n",PQresultErrorMessage(res));
-            bytes_sent = send(sockfd,"s1",BUFF_SIZE,0);
+            bytes_sent = send(sockfd,REGISTER_FAIL,BUFF_SIZE,0);
             return 0;
         }
-        bytes_sent = send(sockfd,"s0",BUFF_SIZE,0);
+        bytes_sent = send(sockfd,REGISTER_SUCCESS,BUFF_SIZE,0);
         if (bytes_sent < 0)
         perror("\nError: ");
         return 1;
@@ -60,6 +60,6 @@ int Register(int sockfd, PGconn *conn) {
 
     
     
-    bytes_sent = send(sockfd, "s1", BUFF_SIZE, 0); /* echo to the client */
+    bytes_sent = send(sockfd, USER_EXIST, BUFF_SIZE, 0); /* echo to the client */
     return 0;
 }

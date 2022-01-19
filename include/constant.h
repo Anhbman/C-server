@@ -8,6 +8,9 @@
 #define BACKLOG 20
 #define BUFF_SIZE 1024
 //#define SEND_END "S1"
+#define REGISTER_SUCCESS "70"
+#define REGISTER_FAIL "71"
+#define USER_EXIST "72"
 #define ADD_PLACE_OK "81"
 #define ADD_PLACE_ERR "80"
 #define REMOVE_PLACE "9"
