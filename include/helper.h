@@ -9,8 +9,9 @@
 
 
 int userID (char* name, PGconn *conn);
-void showPlaceUser(int sockfd, char* name, PGconn *conn);
 void showFriend(int sockfd, char* name,PGconn *conn);
-int getPlaceID (int sockfd,PGconn *conn, char* namePlace);
+int getPlaceID (int sockfd,PGconn *conn, char* namePlace, int cate);
+int getCategoryID (PGconn *conn, char* cate);
+char* getuserName (int sockfd,PGconn *conn, char* name);
 
 #endif //C_SERVER_HELPER_H

@@ -24,6 +24,9 @@
 #include "include/FuncConstant.h"
 #include "include/helper.h"
 #include "include/home.h"
+#include "include/AddFriend.h"
+#include "include/Register.h"
+#include "include/SharePlace.h"
 
 
 // #define PORT 5500
@@ -67,7 +70,7 @@ void showHome(int sockfd, PGconn *conn){
 
 void controller (int sockfd){
 
-	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=SocketPrograming");
+	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=LTM3");
 	if (PQstatus(conn) == CONNECTION_BAD) {   
         fprintf(stderr, "Connection to database failed: %s\n",
             PQerrorMessage(conn));
@@ -105,7 +108,6 @@ void controller (int sockfd){
 			break;
 		case 2:
 			// showHome(sockfd, conn);
-			printf("Home\n");
 			home(sockfd, conn);
 			break;
 		case 3:
@@ -114,8 +116,17 @@ void controller (int sockfd){
 			break;
 		case 5:
 			printf("show_user_place\n");
-			showPlaceUser(sockfd, name,conn);
-			showFriend(sockfd, name, conn);
+			showPlaceUser(sockfd,conn);
+		
+			break;
+		// case 6:
+		// 	printf("show user friend\n");
+		// 	showFriend(sockfd,conn);
+		// 	break;
+		case 7:
+
+			printf("register\n");
+			Register(sockfd,conn);
 			break;
 		case 8:
 			printf("Add place\n");
@@ -124,6 +135,41 @@ void controller (int sockfd){
 		case 9:
 			printf("delete\n");
 			remove_place(sockfd,conn);
+			break;
+
+		case 10:
+			backup(sockfd, conn);
+			break;
+		case 11:
+
+			printf("restore\n");
+			restore(sockfd,conn);
+
+			break;
+		case 15 :
+			printf("Add Friend\n");
+			Addfriend(sockfd,conn);
+			break;
+		case 16:
+			printf("Add Friend\n");
+			showFriendList(sockfd,conn);
+			
+			break;
+		case 17:
+			printf("Show User List\n");
+			showUserList(sockfd,conn);
+			break;
+		case 18:
+			printf("Show Friend Request\n");
+			showFriendRequest(sockfd,conn);
+			break;
+		case 19:
+			printf("Accept Friend\n");
+			acceptFriend(sockfd,conn);
+			break;
+		case 20:
+			printf("Share Place\n");
+			sharePlace(sockfd,conn);
 			break;
 		default:
 			break;
@@ -206,7 +252,7 @@ int main(int argc, char* argv[]) {
 		close(conn_sock);
 	}
 	close(listen_sock);
-	PQfinish(conn);
+	// PQfinish(conn);
 	//return 0;
 
     // PQclear(res);

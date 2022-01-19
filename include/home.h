@@ -14,5 +14,7 @@
 void home(int sockfd, PGconn *conn);
 void show_page_data(int sockfd, PGconn *conn);
 void remove_place (int sockfd, PGconn *conn );
+void restore (int sockfd, PGconn *conn);
+void backup (int sockfd, PGconn *conn);
 
 #endif //C_SERVER_HOME_H
