@@ -60,6 +60,8 @@ void showFriend(int sockfd, char* name,PGconn *conn) {
 }
 
 int getPlaceID (int sockfd,PGconn *conn, char* namePlace, int cate) {
+
+    printf("getPlaceID\n");
     char* Address = (char*)malloc(BUFF_SIZE*sizeof(char)); 
 
     sprintf(Address,"SELECT \"address_id\" FROM public.\"Address\" where address = '%s' and category_id = %d",namePlace, cate);
@@ -75,6 +77,12 @@ int getPlaceID (int sockfd,PGconn *conn, char* namePlace, int cate) {
     int rec_count = PQntuples(res);
 
     printf("count: %d\n", rec_count);
+
+    if (rec_count == 0)
+    {
+        return - 1;
+    }
+    
 	
     free(Address);
     return atoi(PQgetvalue(res, 0, 0));

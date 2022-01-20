@@ -58,6 +58,7 @@ void sharePlace(int sockfd,PGconn *conn) {
     char* username = (char*)malloc(250*sizeof(char));
     char* placename = (char*)malloc(250*sizeof(char));
     char* query_check = (char*)malloc(250*sizeof(char));
+    char* cate = (char*)malloc(250*sizeof(char));
     
     //strcpy(query,"INSERT INTO public.taikhoan(user_name,password) VALUES ");
     buff[bytes_received] = '\0';
@@ -68,10 +69,13 @@ void sharePlace(int sockfd,PGconn *conn) {
     token = strtok(NULL,"|");
     strcpy(placename,token);
     token = strtok(NULL,"|");
+    strcpy(cate,token);
+    token = strtok(NULL,"|");
     strcpy(friendname,token);
     int UserID = userID(username,conn);
     int FriendID = userID(friendname,conn);
-    int PlaceID = getPlaceID(sockfd,conn,placename);
+    int cateID = getCategoryID(conn, cate);
+    int PlaceID = getPlaceID(sockfd,conn,placename, cateID);
     printf("friend id: %d\n",FriendID);
 
     sprintf(query,"insert into public.\"FavoriteAddress\" values (%d,%d,%d)",FriendID,PlaceID,UserID);

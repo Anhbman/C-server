@@ -70,7 +70,7 @@ void showHome(int sockfd, PGconn *conn){
 
 void controller (int sockfd){
 
-	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=LTM3");
+	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=ltm5");
 	if (PQstatus(conn) == CONNECTION_BAD) {   
         fprintf(stderr, "Connection to database failed: %s\n",
             PQerrorMessage(conn));
@@ -171,6 +171,10 @@ void controller (int sockfd){
 			printf("Share Place\n");
 			sharePlace(sockfd,conn);
 			break;
+		case 21:
+			printf("Delete Request\n");
+			deleteRequest(sockfd,conn);
+			break;
 		default:
 			break;
 		}
@@ -183,12 +187,6 @@ int main(int argc, char* argv[]) {
 
 	// Coonect DB
 
-	PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=SocketPrograming");
-	if (PQstatus(conn) == CONNECTION_BAD) {   
-        fprintf(stderr, "Connection to database failed: %s\n",
-            PQerrorMessage(conn));
-        do_exit(conn); 
-    }
 
     // Server
 

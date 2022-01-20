@@ -17,12 +17,16 @@ int Login(int sockfd, PGconn *conn) {
 
     char* username = (char*)malloc(250*sizeof(char));
 
-    strcpy(username,"SELECT * FROM public.taikhoan where ");
+    // strcpy(username,"SELECT * FROM public.taikhoan where ");
     buff[bytes_received] = '\0';
 
     printf("recv: %s\n",buff);
-    strcat(username, buff);
 
+    char* tk = strtok(buff,"|");
+    char* mk = strtok(NULL,"|");
+    // strcat(username, buff);
+
+    sprintf(username,"SELECT * FROM public.taikhoan where user_name = '%s' and password = '%s' ",tk, mk);
     PGresult *res = PQexec(conn, username);
     printf("buff: %s\n",username);
 
