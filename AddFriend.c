@@ -4,7 +4,7 @@
 
 int Addfriend(int sockfd, PGconn *conn) {
 	char buff[BUFF_SIZE];
-	int bytes_sent,bytes_received;
+	int bytes_received;
 	bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
     if (bytes_received < 0)
         perror("\nError: ");
@@ -27,7 +27,7 @@ int Addfriend(int sockfd, PGconn *conn) {
     int FriendID = userID(friendname,conn);
     printf("%d\n",FriendID);
     if (FriendID == -1) {
-        bytes_sent = send(sockfd,ADDFRIEND_FAIL,BUFF_SIZE,0);
+        send(sockfd,ADDFRIEND_FAIL,BUFF_SIZE,0);
         free(query);
         free(username);
         free(friendname);
@@ -46,7 +46,7 @@ int Addfriend(int sockfd, PGconn *conn) {
         if (PQresultStatus(res) != PGRES_COMMAND_OK) {
             printf("Data no retrieved\n ");
             printf("%s\n",PQresultErrorMessage(res));
-            bytes_sent = send(sockfd,ADDFRIEND_FAIL,BUFF_SIZE,0);
+            send(sockfd,ADDFRIEND_FAIL,BUFF_SIZE,0);
             free(query);
             free(username);
             free(friendname);
@@ -54,7 +54,7 @@ int Addfriend(int sockfd, PGconn *conn) {
             free(query_check1);
             return 0;
         }
-        bytes_sent = send(sockfd,ADDFRIEND_SUCCESS,BUFF_SIZE,0);
+        send(sockfd,ADDFRIEND_SUCCESS,BUFF_SIZE,0);
         free(query);
         free(username);
         free(friendname);
@@ -64,7 +64,7 @@ int Addfriend(int sockfd, PGconn *conn) {
         return 1;
     } else {
         printf("Data exsist\n");
-        bytes_sent = send(sockfd,WAITING_ACCEPT,BUFF_SIZE,0);
+        send(sockfd,WAITING_ACCEPT,BUFF_SIZE,0);
         free(query);
         free(username);
         free(friendname);

@@ -55,7 +55,6 @@ void controller (int sockfd){
 	while (1)
 	{
 		char buff[BUFF_SIZE];
-		char name[BUFF_SIZE];
 		int bytes_received;
 
 		bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
@@ -130,6 +129,11 @@ void controller (int sockfd){
 			printf("Share Place\n");
 			sharePlace(sockfd,conn);
 			break;
+		case 999:
+
+			close(sockfd);
+			return;
+		
 		default:
 			break;
 		}
@@ -138,8 +142,6 @@ void controller (int sockfd){
 }
 
 int main(int argc, char* argv[]) {
-
-
 
     // Server
 
@@ -203,7 +205,6 @@ int main(int argc, char* argv[]) {
 		close(conn_sock);
 	}
 	close(listen_sock);
-	close(conn_sock);
 
     return 0;
 }
