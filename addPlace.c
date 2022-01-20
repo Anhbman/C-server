@@ -10,38 +10,27 @@ int addAddress (int sockfd,char* namePlace,char* category,PGconn *conn){
     int cateID = getCategoryID(conn,category);
 
     sprintf(Address,"SELECT \"address_id\" FROM public.\"Address\" where address = '%s' and category_id = %d ",namePlace, cateID);
-	printf("query: %s\n",Address);
-
 	PGresult *res = PQexec(conn, Address);
-
 	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         printf("No data retrieved\n");        
         PQclear(res);
     }    
 
-    int rec_count = PQntuples(res);
-
-    printf("count: %d\n", rec_count);
-	
+    int rec_count = PQntuples(res);	
     if (rec_count != 0){
         free(Address);
 		return atoi(PQgetvalue(res, 0, 0));
 	} else {
         char* insertAddress = (char*)malloc(BUFF_SIZE*sizeof(char)); 
-
         sprintf(insertAddress,"INSERT INTO public.\"Address\" (\"address_id\", \"address\", \"category_id\") VALUES (nextval(\'Address_id\'), '%s', %d)",namePlace, cateID);
        
         PGresult *res = PQexec(conn, insertAddress);
-
         free(insertAddress);
-        
         if (PQresultStatus(res) != PGRES_COMMAND_OK) {
             printf("Loi select Address 1\n");
-            //do_exit(conn, res);    
         }
 
         res = PQexec(conn, Address);
-
         free(Address);
         if (PQresultStatus(res) != PGRES_TUPLES_OK) {
             printf("No data retrieved\n");        
@@ -60,12 +49,10 @@ int addAddress (int sockfd,char* namePlace,char* category,PGconn *conn){
 void addPlace(int sockfd, PGconn *conn) {
 
 	char* place = (char*)malloc(BUFF_SIZE*sizeof(char));
-
     char buff[BUFF_SIZE];
     int bytes_sent, bytes_received;
 
     bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
-
     if (bytes_received < 0)
         perror("\nError: ");
     else if (bytes_received == 0)
@@ -100,8 +87,6 @@ void addPlace(int sockfd, PGconn *conn) {
             printf("ERROR add Place");
         }
     }
-
-    
 	free(place); 
 }
 

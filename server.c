@@ -43,31 +43,6 @@ void echo(int sockfd);
 
 
 
-void showHome(int sockfd, PGconn *conn){
-
-	printf("Home\n");
-	PGresult *res = PQexec(conn, "select * FROM public.\"Address\""); 
-
-	int rec_count = PQntuples(res);
-	char col[100]; 
-	
-	sprintf(col, "%d", rec_count);
-	
-	char value[BUFF_SIZE] = {0};
-	
-    for (int row=0; row<rec_count; row++) {
-		
-		// test dung
-		strcat(value,PQgetvalue(res, row, 1));
-		strcat(value,"|");
-	}
-
-	//printf("value: %s\n",value);
-	int bytes_sent = send(sockfd, value, BUFF_SIZE, 0); /* echo to the client */
-	if (bytes_sent < 0)
-		perror("\nError: ");
-}
-
 void controller (int sockfd){
 
 	PGconn *conn = PQconnectdb("user=postgres host=localhost password=1304 dbname=LTM");
@@ -81,10 +56,8 @@ void controller (int sockfd){
 	{
 		char buff[BUFF_SIZE];
 		char name[BUFF_SIZE];
-
 		int bytes_received;
 
-// 		Chuc nang
 		bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
 		if (bytes_received < 0)
 			perror("\nError: ");
@@ -93,12 +66,7 @@ void controller (int sockfd){
 			return;
 		}
 		buff[bytes_received] = 0;
-
-
 		int chon = atoi(buff);
-
-		// user name
-
 
 		switch (chon)
 		{
@@ -107,7 +75,6 @@ void controller (int sockfd){
 			Login(sockfd, conn);
 			break;
 		case 2:
-			// showHome(sockfd, conn);
 			home(sockfd, conn);
 			break;
 		case 3:
@@ -117,14 +84,8 @@ void controller (int sockfd){
 		case 5:
 			printf("show_user_place\n");
 			showPlaceUser(sockfd,conn);
-		
 			break;
-		// case 6:
-		// 	printf("show user friend\n");
-		// 	showFriend(sockfd,conn);
-		// 	break;
 		case 7:
-
 			printf("register\n");
 			Register(sockfd,conn);
 			break;
@@ -141,10 +102,8 @@ void controller (int sockfd){
 			backup(sockfd, conn);
 			break;
 		case 11:
-
 			printf("restore\n");
 			restore(sockfd,conn);
-
 			break;
 		case 15 :
 			printf("Add Friend\n");
@@ -181,14 +140,6 @@ void controller (int sockfd){
 int main(int argc, char* argv[]) {
 
 
-	// Coonect DB
-
-	// PGconn *conn = PQconnectdb("user=postgres host=localhost password=postgres dbname=SocketPrograming");
-	// if (PQstatus(conn) == CONNECTION_BAD) {   
-    //     fprintf(stderr, "Connection to database failed: %s\n",
-    //         PQerrorMessage(conn));
-    //     do_exit(conn); 
-    // }
 
     // Server
 
@@ -252,10 +203,6 @@ int main(int argc, char* argv[]) {
 		close(conn_sock);
 	}
 	close(listen_sock);
-	// PQfinish(conn);
-	//return 0;
-
-    // PQclear(res);
 	close(conn_sock);
 
     return 0;
