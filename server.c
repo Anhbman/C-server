@@ -134,6 +134,10 @@ void controller (int sockfd){
 			close(sockfd);
 			return;
 		
+		case 21:
+			printf("Delete Request\n");
+			deleteRequest(sockfd,conn);
+			break;
 		default:
 			break;
 		}

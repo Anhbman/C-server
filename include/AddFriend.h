@@ -15,4 +15,5 @@ void showFriendList(int sockfd,PGconn *conn);
 void showUserList(int sockfd,PGconn *conn);
 void showFriendRequest(int sockfd,PGconn *conn);
 void acceptFriend(int sockfd,PGconn *conn);
+void deleteRequest(int sockfd,PGconn *conn);
 #endif //C_SERVER_LOGIN_H

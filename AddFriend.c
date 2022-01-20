@@ -238,3 +238,42 @@ void acceptFriend(int sockfd,PGconn *conn) {
     free(friendname);
     return ;   
 }
+void deleteRequest(int sockfd,PGconn *conn) {
+    char buff[BUFF_SIZE];
+	int bytes_sent,bytes_received;
+	bytes_received = recv(sockfd, buff, BUFF_SIZE, 0); //blocking
+    if (bytes_received < 0)
+        perror("\nError: ");
+    else if (bytes_received == 0)
+        printf("Connection closed.\n");	
+    char* query = (char*)malloc(250*sizeof(char));
+    char* username = (char*)malloc(250*sizeof(char));
+    char* friendname = (char*)malloc(250*sizeof(char));
+
+    buff[bytes_received] = '\0';
+    printf("%s\n",buff);
+    char* token;
+    token = strtok(buff,"|");
+    strcpy(username,token);
+    token = strtok(NULL,"|");
+    strcpy(friendname,token);
+    int UserID = userID(username,conn);
+    int FriendID = userID(friendname,conn);
+
+    sprintf(query,"DELETE from public.\"Friend\" WHERE user_id1 = %d and user_id2 = %d",FriendID,UserID);
+    printf("query: %s\n",query);
+    PGresult *res = PQexec(conn,query);
+
+    free(query);
+    free(username);
+    free(friendname);
+
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+            printf("Delete request error\n");
+            //do_exit(conn, res);    
+            send(sockfd, DELETE_REQUEST_FAIL,BUFF_SIZE,0);
+    }
+    else {
+        send(sockfd, DELETE_REQUEST_SUCCESS,BUFF_SIZE,0);
+    }
+}
